@@ -4,13 +4,28 @@
 #include <algorithm>
 #include <iostream>
 #include <regex>
+#include <signal.h>
 
 #include "proxy.h"
 #include "server.h"
 
+using namespace std;
+
+static bool isRunning = true;
+
+void sigHandler(int signo)
+{
+	isRunning = false;
+}
+
 int main()
 {
-	using namespace std;
+	struct sigaction s;
+
+	s.sa_handler = sigHandler;
+	s.sa_flags = 0;
+	sigaction(SIGINT, &s, NULL);
+
 	Proxy proxy(make_unique<ComplexLed>());
 	
 	const string serverFifo = "/tmp/server";
@@ -20,7 +35,7 @@ int main()
 
 	Server server(serverFifo,clientFifo);
 	server.init();
-	while(1)
+	while(isRunning)
 	{
 		string readStr;
 		server.readData(readStr);
