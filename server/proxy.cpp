@@ -1,14 +1,17 @@
 #include <string>
 #include <sstream>
+#include <stdexcept>
+#include <iostream>
+
 #include "proxy.h"
 
 Proxy::Proxy(std::unique_ptr<ComplexLed> complexLed) : m_complexLed(std::move(complexLed)),
-	m_commandMap({  {"set-led-state", [&](std::string& str) {return this->handleSetLedState(str); }},
-					{"get-led-state", [&](std::string& str) {return this->handleGetLedState(str); }},
-					{"set-led-color", [&](std::string& str) {return this->handleSetLedColor(str); }},
-					{"get-led-color", [&](std::string& str) {return this->handleGetLedColor(str); }},
-					{"set-led-rate",  [&](std::string& str) {return this->handleSetLedRate(str);  }},
-					{"get-led-rate",  [&](std::string& str) {return this->handleGetLedRate(str);  }}}),
+	m_commandMap({  {"set-led-state", [&](const std::string& str) {return this->handleSetLedState(str); }},
+					{"get-led-state", [&](const std::string& str) {return this->handleGetLedState(str); }},
+					{"set-led-color", [&](const std::string& str) {return this->handleSetLedColor(str); }},
+					{"get-led-color", [&](const std::string& str) {return this->handleGetLedColor(str); }},
+					{"set-led-rate",  [&](const std::string& str) {return this->handleSetLedRate(str);  }},
+					{"get-led-rate",  [&](const std::string& str) {return this->handleGetLedRate(str);  }}}),
 
 	m_colorMap( {{"red", eColorRed},
 				{"green", eColorGreen},
@@ -20,7 +23,7 @@ Proxy::Proxy(std::unique_ptr<ComplexLed> complexLed) : m_complexLed(std::move(co
 
 }
 
-std::string Proxy::processRequest(std::string & request)
+std::string Proxy::processRequest(const std::string & request)
 {
 	std::vector<std::string> commandAndParams = split(request, ' ');
 	Answer answer = handleRequest(commandAndParams);
@@ -32,12 +35,12 @@ std::vector<std::string>  Proxy::split(const std::string &s, char delim) {
 	std::string item;
 	std::vector<std::string> elems;
 	while (std::getline(ss, item, delim)) {
-		elems.push_back(std::move(item));
+		elems.push_back(item);
 	}
 	return elems;
 }
 
-Answer Proxy::handleSetLedState(std::string& argument)
+Answer Proxy::handleSetLedState(const std::string& argument)
 {
 	Answer answer;
 	if (argument.empty() || m_stateMap.count(argument) == 0)
@@ -49,7 +52,7 @@ Answer Proxy::handleSetLedState(std::string& argument)
 	return answer;
 }
 
-Answer Proxy::handleGetLedState(std::string& argument)
+Answer Proxy::handleGetLedState(const std::string& argument)
 {
 	Answer answer;
 	if (!argument.empty())
@@ -69,7 +72,7 @@ Answer Proxy::handleGetLedState(std::string& argument)
 	return answer;
 }
 
-Answer Proxy::handleSetLedColor(std::string& argument)
+Answer Proxy::handleSetLedColor(const std::string& argument)
 {
 	Answer answer;
 
@@ -81,7 +84,7 @@ Answer Proxy::handleSetLedColor(std::string& argument)
 	return answer;
 }
 
-Answer Proxy::handleGetLedColor(std::string& argument)
+Answer Proxy::handleGetLedColor(const std::string& argument)
 {
 	Answer answer;
 	if (!argument.empty())
@@ -101,7 +104,7 @@ Answer Proxy::handleGetLedColor(std::string& argument)
 	return answer;
 }
 
-Answer Proxy::handleSetLedRate(std::string& argument)
+Answer Proxy::handleSetLedRate(const std::string& argument)
 {
 	Answer answer;
 
@@ -114,8 +117,9 @@ Answer Proxy::handleSetLedRate(std::string& argument)
 	{
 		ledRate = std::stoi(argument);
 	}
-	catch (...)
+	catch (std::exception& e)
 	{
+		std::cout << "Exeption found " << __FUNCTION__ << " " << e.what() << std::endl;
 		return answer;
 	}
 
@@ -123,7 +127,7 @@ Answer Proxy::handleSetLedRate(std::string& argument)
 	return answer;
 }
 
-Answer Proxy::handleGetLedRate(std::string& argument)
+Answer Proxy::handleGetLedRate(const std::string& argument)
 {
 	Answer answer;
 	if (!argument.empty())
@@ -136,7 +140,7 @@ Answer Proxy::handleGetLedRate(std::string& argument)
 	return answer;
 }
 
-Answer Proxy::handleRequest(std::vector<std::string>& request)
+Answer Proxy::handleRequest(const std::vector<std::string>& request)
 {
 	Answer answer;
 	if (request.empty() || request.size() > 2)
