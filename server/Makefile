@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-c -Wall -std=c++14
 LDFLAGS=
-SOURCES=main.cpp proxy.cpp complex_led.cpp primitive_led.cpp server.cpp
+SOURCES=main.cpp proxy.cpp complex_led.cpp primitive_led.cpp server.cpp ledServer.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=ledServer
 

@@ -14,8 +14,12 @@ setLedColor=set-led-color
 getLedRate=get-led-rate
 setLedRate=set-led-rate
 
+trap "rm -f $client_pipe; exit" SIGHUP SIGINT SIGTERM
 
-trap "rm -f $client_pipe" EXIT
+if [[ ! -p $server_pipe ]]; then
+    echo Ledserver not found
+    exit
+fi
 
 if [[ ! -p $client_pipe ]]; then
     mkfifo $client_pipe
@@ -23,6 +27,7 @@ fi
 
 send_request () {
     echo "$BASHPID" $1 $2 > $server_pipe
+    sleep 0.001
 }
 
 read_from_pipe(){
@@ -33,7 +38,6 @@ read_from_pipe(){
 
 show_power_state() {
     send_request $getLedState
-    sleep 0.001
     if read line <$client_pipe; then
         echo $line
         state=$(echo $line|sed -n 's/[A-Z]* \([a-z]*\)$/\1/p')
@@ -49,7 +53,6 @@ show_power_state() {
 
 setPowerState() {
     send_request $setLedState $1
-    sleep 0.001
     read_from_pipe
 }
 
@@ -71,7 +74,6 @@ done
 
 show_color() {
     send_request $getLedColor
-    sleep 0.001
     if read line <$client_pipe; then
         color=$(echo $line|sed -n 's/[A-Z]* \([a-z]*\)$/\1/p')
         if [[ ! -z "$color" ]] ; then
@@ -106,7 +108,6 @@ done
 
 show_rate() {
     send_request $getLedRate
-    sleep 0.001
     if read line <$client_pipe; then
         ledRate=$(echo $line|sed -n 's/[A-Z]* \([0-9]*\)$/\1/p')
         if [[ ! -z "$ledRate" ]] ; then
@@ -148,5 +149,3 @@ while true; do
         esac
     done
 done
-echo 'Thank you for using our product. Bye bye!'
-
