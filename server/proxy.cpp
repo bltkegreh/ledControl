@@ -5,7 +5,7 @@
 
 #include "proxy.h"
 
-Proxy::Proxy(std::unique_ptr<ComplexLed> complexLed) : m_complexLed(std::move(complexLed)),
+Proxy::Proxy(std::unique_ptr<Led> led) : m_led(std::move(led)),
 	m_commandMap({  {"set-led-state", [&](const std::string& str) {return this->handleSetLedState(str); }},
 					{"get-led-state", [&](const std::string& str) {return this->handleGetLedState(str); }},
 					{"set-led-color", [&](const std::string& str) {return this->handleSetLedColor(str); }},
@@ -46,8 +46,7 @@ Answer Proxy::handleSetLedState(const std::string& argument)
 	if (argument.empty() || m_stateMap.count(argument) == 0)
 		return answer;
 
-	m_complexLed->setPowerState(m_stateMap[argument]);
-	answer.isSuccess = true;
+	answer.isSuccess = m_led->setPowerState(m_stateMap[argument]);;
 
 	return answer;
 }
@@ -58,7 +57,7 @@ Answer Proxy::handleGetLedState(const std::string& argument)
 	if (!argument.empty())
 		return answer;
 
-	PowerState powerState = m_complexLed->getPowerState();
+	PowerState powerState = m_led->getPowerState();
 
 	for (auto& ps : m_stateMap)
 	{
@@ -79,8 +78,8 @@ Answer Proxy::handleSetLedColor(const std::string& argument)
 	if (argument.empty() || m_colorMap.count(argument) == 0)
 		return answer;
 
-	answer.isSuccess = m_complexLed->setActiveColor(m_colorMap[argument]);
-
+	m_led->setActiveColor(m_colorMap[argument]);
+	answer.isSuccess = true;
 	return answer;
 }
 
@@ -90,7 +89,7 @@ Answer Proxy::handleGetLedColor(const std::string& argument)
 	if (!argument.empty())
 		return answer;
 
-	Color color = m_complexLed->getActiveColor();
+	Color color = m_led->getActiveColor();
 
 	for (auto& c : m_colorMap)
 	{
@@ -123,7 +122,7 @@ Answer Proxy::handleSetLedRate(const std::string& argument)
 		return answer;
 	}
 
-	answer.isSuccess = m_complexLed->setBlinkFrequencyHz(ledRate);
+	answer.isSuccess = m_led->setBlinkFrequencyHz(ledRate);
 	return answer;
 }
 
@@ -133,7 +132,7 @@ Answer Proxy::handleGetLedRate(const std::string& argument)
 	if (!argument.empty())
 		return answer;
 
-	uint32_t ledRate = m_complexLed->getBlinkFrequencyHz();
+	uint32_t ledRate = m_led->getBlinkFrequencyHz();
 	answer.answerStr = std::to_string(ledRate);
 	answer.isSuccess = true;
 

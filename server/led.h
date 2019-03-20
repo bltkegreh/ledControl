@@ -1,4 +1,4 @@
-#include "primitive_led.h"
+//#include "primitive_led.h"
 #include <map>
 #include <memory>
 
@@ -8,15 +8,25 @@ enum PowerState
 	ePowerStateOn
 };
 
-class ComplexLed
+enum Color
+{
+	eColorUnknown,
+	eColorRed,
+	eColorGreen,
+	eColorBlue
+};
+
+const uint32_t MAX_BLINK_RATE = 5;
+
+class Led
 {
 public:
-	ComplexLed();
+	Led();
 
-	bool setActiveColor(Color color);
+	void setActiveColor(Color color);
 	Color getActiveColor() const;
 
-	void setPowerState(PowerState powerState);
+	bool setPowerState(PowerState powerState);
 	PowerState getPowerState() const;
 
 	bool setBlinkFrequencyHz(uint32_t blinkRateHz);
@@ -25,7 +35,6 @@ public:
 
 private:
 	PowerState m_powerState = ePowerStateOff;
-	
-	std::map<Color, std::unique_ptr<PrimitiveLed>> m_inactiveLedPrimitives;
-	std::map<Color, std::unique_ptr<PrimitiveLed>> m_activeLedPrimitives;
+	Color m_color = eColorUnknown;
+	uint32_t m_blinkFrequencyHz = 0;
 };

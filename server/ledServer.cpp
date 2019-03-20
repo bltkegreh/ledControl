@@ -17,11 +17,11 @@ const std::string LedServer::m_serverFifo     = "/tmp/server";
 const std::string LedServer::m_clientFifoBase = "/tmp/client";
 const std::string LedServer::m_commandRegexp = "(\\d+)\\s+(.*)";
 
-LedServer::LedServer() : m_server(m_serverFifo, m_clientFifoBase), m_proxy(make_unique<ComplexLed>())
+LedServer::LedServer() : m_server(m_serverFifo, m_clientFifoBase), m_proxy(make_unique<Led>())
 {
 }
 
-void LedServer::signalHandler(int signo)
+void LedServer::signalHandler(__attribute__((unused)) int signo)
 {
     m_terminateFlag = 1;
 }

@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <functional>
-#include "complex_led.h"
+#include "led.h"
 
 struct Answer
 {
@@ -14,14 +14,14 @@ class Proxy
 {
 public:
 
-	Proxy(std::unique_ptr<ComplexLed> complexLed);
+	Proxy(std::unique_ptr<Led> led);
 	std::string processRequest(const std::string& request);
 
 private:
 	Answer handleRequest(const std::vector<std::string>& request);
 	std::vector<std::string> split(const std::string &s, char delim);
 
-	std::unique_ptr<ComplexLed> m_complexLed;
+	std::unique_ptr<Led> m_led;
 
 	std::map<std::string, std::function<Answer(const std::string& argument)>> m_commandMap;
 	std::map<std::string, Color> m_colorMap;
