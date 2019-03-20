@@ -1,19 +1,18 @@
-//#include "primitive_led.h"
 #include <map>
 #include <memory>
 
 enum PowerState
 {
-	ePowerStateOff,
-	ePowerStateOn
+    ePowerStateOff,
+    ePowerStateOn
 };
 
 enum Color
 {
-	eColorUnknown,
-	eColorRed,
-	eColorGreen,
-	eColorBlue
+    eColorUnknown,
+    eColorRed,
+    eColorGreen,
+    eColorBlue
 };
 
 const uint32_t MAX_BLINK_RATE = 5;
@@ -21,20 +20,20 @@ const uint32_t MAX_BLINK_RATE = 5;
 class Led
 {
 public:
-	Led();
+    Led();
 
-	void setActiveColor(Color color);
-	Color getActiveColor() const;
+    void setActiveColor(Color color);
+    Color getActiveColor() const;
 
-	bool setPowerState(PowerState powerState);
-	PowerState getPowerState() const;
+    bool setPowerState(PowerState powerState);
+    PowerState getPowerState() const;
 
-	bool setBlinkFrequencyHz(uint32_t blinkRateHz);
-	uint32_t getBlinkFrequencyHz() const;
+    bool setBlinkFrequencyHz(uint32_t blinkRateHz);
+    uint32_t getBlinkFrequencyHz() const;
 
 
 private:
-	PowerState m_powerState = ePowerStateOff;
-	Color m_color = eColorUnknown;
-	uint32_t m_blinkFrequencyHz = 0;
+    PowerState m_powerState = ePowerStateOff;
+    Color m_color = eColorUnknown;
+    uint32_t m_blinkFrequencyHz = 0;
 };
