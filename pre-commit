@@ -1,0 +1,9 @@
+#!/bin/sh
+# To enable this hook, rename this file to "pre-commit".
+
+VERSION_FILE="server/version.h"
+echo $VERSION_FILE
+VERSION="$(git log master --pretty=oneline | wc -l)"
+echo "#pragma once" > $VERSION_FILE
+echo "#include <string>" >> $VERSION_FILE
+echo const std::string version = \""0.0.$VERSION"\"\; >> $VERSION_FILE

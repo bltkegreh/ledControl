@@ -9,6 +9,7 @@
 #include "proxy.h"
 #include "server.h"
 #include "ledServer.h"
+#include "version.h"
 using namespace std;
 
 volatile std::sig_atomic_t LedServer::m_terminateFlag = 0;
@@ -71,4 +72,9 @@ void LedServer::run()
             }
         }
     }
+}
+
+void LedServer::printVersion()
+{
+    cout << "LedServer version " << version << endl;
 }

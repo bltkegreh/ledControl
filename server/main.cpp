@@ -3,6 +3,7 @@
 int main()
 {
     LedServer ledServer;
+    ledServer.printVersion();
     if(ledServer.init())
     {
         ledServer.run();

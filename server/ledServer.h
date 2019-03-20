@@ -11,6 +11,7 @@ public:
 
     bool init();
     void run();
+    void printVersion();
 
     static void signalHandler(int signalHandler);
 
