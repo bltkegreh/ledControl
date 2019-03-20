@@ -7,3 +7,4 @@ VERSION="$(git log master --pretty=oneline | wc -l)"
 echo "#pragma once" > $VERSION_FILE
 echo "#include <string>" >> $VERSION_FILE
 echo const std::string version = \""0.0.$VERSION"\"\; >> $VERSION_FILE
+git add $VERSION_FILE
